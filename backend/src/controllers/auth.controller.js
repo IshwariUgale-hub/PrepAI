@@ -1,7 +1,7 @@
 // controller is just a middlemam who take request and give that req to serives and they perfrom the task and return result to
 // controller and then controller send res to the client.
 
-const authservice = reuire('./services/authservice'); //main business logic on authservice.js
+const authservice = require('../services/authservice'); //main business logic on authservice.js
 
 
 exports.register=  async (req, res)=>{
@@ -44,7 +44,7 @@ exports.forgotPassword = async (req, res)=>{
 
 exports.resetPassword = async (req,  res )=>{
     try{
-          const result  = await authservice.resetPassword( req.param.token, req.body.password);
+          const result  = await authservice.resetPassword( req.params.token, req.body.password);
           res.status(200).json(result);
     }
     catch(e){
@@ -55,7 +55,7 @@ exports.resetPassword = async (req,  res )=>{
 
 exports.verifyEmail = async (req, res)=>{
     try{
-        const result = await authService.verifyEmail(req.params.token);
+        const result = await authservice.verifyEmail(req.params.token);
         res.status(200).json(result);
     }
     catch(e){
