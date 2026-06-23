@@ -1,10 +1,20 @@
+const dns = require('dns');
+
+dns.setDefaultResultOrder('ipv4first');
+
+dns.setServers([
+    '1.1.1.1',
+    '8.8.8.8'
+]);
+
+
 require('dotenv').config();
 
 const app = require('./src/app');
 const  connectDB  = require('./src/config/db');
 const authRoutes = require('./src/routes/auth.routes');
 
-console.log(process.env.MONGODB_SERVER);
+
 connectDB();
 
 

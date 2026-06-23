@@ -62,7 +62,7 @@ exports.login  = async ({email, password})=>{
     );
 
     return{
-        satus:'success',
+        status:'success',
         token:token,
         message:"Login successfully"
     }
