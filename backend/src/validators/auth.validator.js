@@ -35,4 +35,12 @@ const loginSchema =joi.object({
 
 });
 
-module.exports = {registerSchema, loginSchema};
+const forgotPasswordSchema = joi.object({
+    email: joi.string().email().required()
+});
+
+const resetPasswordSchema = joi.object({
+    password: joi.string().min(6).required()
+});
+
+module.exports = {registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema};

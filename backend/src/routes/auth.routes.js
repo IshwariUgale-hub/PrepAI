@@ -6,13 +6,14 @@ const router = express.Router();
 const authcontroller = require('../controllers/auth.controller');
 const validateuser = require('../middlewares/validate.middleware');
 const {registerSchema , loginSchema} = require('../validators/auth.validator');
+const { forgotPasswordSchema, resetPasswordSchema } = require('../validators/auth.validator');
 
 
 router.post('/register',validateuser(registerSchema), authcontroller.register);
 router.post('/login', validateuser(loginSchema), authcontroller.login);
 router.post('/logout',authcontroller.logout );
-router.post('/forgot-password',authcontroller.forgotPassword );
-router.post('/reset-password/:token', authcontroller.resetPassword );
+router.post('/forgot-password',validateuser(forgotPasswordSchema),authcontroller.forgotPassword );
+router.post('/reset-password/:token',validateuser(resetPasswordSchema),authcontroller.resetPassword );
 
 router.get('/verify/:token', authcontroller.verifyEmail);
 

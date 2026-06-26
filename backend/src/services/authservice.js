@@ -3,6 +3,8 @@
 const model = require('../models/user');
 const {generateToken}= require('../utils/jwt.utils');
 const { hashPassword, comparePassword } = require('../utils/hash.utils');
+const {generateRandomToken}= require('../utils/jwt.utils');
+const {Model} = require("mongoose");
 
 //register task
 exports.register = async ({name, email,password})=>{
@@ -75,19 +77,63 @@ exports.login  = async ({email, password})=>{
 //processsing
 // logout task
 exports.forgotPassword = async (email) => {
+
+    const user= await model.findOne({email});
+    if(!user){
+        throw new Error("this email id not exist");
+    }
+
+    const resetToken =generateRandomToken();
+    user.passwordResetToken =resetToken;
+    user.passwordResetExpires= new Date(Date.now()+ 15*60*1000) //15 min expiry
+    await user.save();
+
+    console.log(`[DEV] Reset token for ${email}: ${resetToken}`);
+
     return {
-        message: "Reset password link sent"
+        message: "If this email exists, a reset link has been sent.",
+        dev_token: resetToken  // ← remove this in production!
     };
 };
 
-exports.resetPassword = async (token, password) => {
-    return {
-        message: "Password reset successful"
-    };
+
+
+exports.resetPassword = async (token, newPassword) => {
+    // 1. Find user with this token AND token not expired
+    const user = await model.findOne({
+        passwordResetToken: token,
+        passwordResetExpires: { $gt: new Date() }  // token must not be expired
+    });
+
+    if (!user) {
+        throw new Error("Invalid or expired reset token");
+    }
+
+    // 2. Hash new password and save
+    user.password = await hashPassword(newPassword);
+    // 3. Clear the reset token (one-time use)
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    await user.save();
+
+    return { message: "Password reset successful" };
+
 };
+
 
 exports.verifyEmail = async (token) => {
-    return {
-        message: "Email verified successfully"
-    };
+    const user = await model.findOne({ EmailVerifyToken: token});
+    if (!user) {
+        throw new Error("Invalid or expired verification token");
+    }
+
+    if (user.isEmailVerified) {
+        return { message: "Email already verified" };
+    }
+
+    user.isEmailVerified =true;
+    user.emailVerifyToken = null;
+    await user.save();
+
+    return { message: "Email verified successfully" };
 };
