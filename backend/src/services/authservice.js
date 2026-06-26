@@ -1,8 +1,8 @@
 //authservice is the main logic behind the task that user need to perform ...the req is coming from the controller
 
 const model = require('../models/user');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const {generateToken}= require('../utils/jwt.utils');
+const { hashPassword, comparePassword } = require('../utils/hash.utils');
 
 //register task
 exports.register = async ({name, email,password})=>{
@@ -14,7 +14,8 @@ exports.register = async ({name, email,password})=>{
     }
 
     //making hash password from original password
-    const hashedpassword =  await bcrypt.hash(password, 10);
+    const hashedpassword = await hashPassword(password);
+    // const hashedpassword =  await bcrypt.hash(password, 10);
 
     //creating user in DB
     const user = await model.create({
@@ -46,20 +47,22 @@ exports.login  = async ({email, password})=>{
 
     //matching password of user of the requested email id user
 
-    const ismatch = await bcrypt.compare(password,user.password)
+     const ismatch = comparePassword(password, user.password);
+    //const ismatch = await bcrypt.compare(password,user.password)
 
-    if(!ismatch){
+    if(!ismatch ){
         throw new Error("Invallid password");
 
     }
 
     //create jwt token for user login
-
-    const token = jwt.sign(
-        {userid: user._id},
-        process.env.JWT_SECRET,
-        {expiresIn:'3d'}
-    );
+    const token =generateToken(user._id);
+    //
+    // const token = jwt.sign(
+    //     {userid: user._id},
+    //     process.env.JWT_SECRET,
+    //     {expiresIn: process.env.JWT_EXPIRES_IN}
+    // );
 
     return{
         status:'success',

@@ -1,5 +1,7 @@
-const jwt  =require('jsonwebtoken')
+
 require('dotenv').config();
+const {verifyToken}= require('../utils/jwt.utils/verifyToken');
+
 exports.verifyToken =(req, res, next)=>{
 
     const authheader=  req.headers.authorization;
@@ -7,13 +9,18 @@ exports.verifyToken =(req, res, next)=>{
         return res.status(401).json({'message':'access denied'})
     }
 
+
     const token = authheader.split(' ')[1];
 
+
+
     try{
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        )
+
+        const decoded = verifyToken(token);
+        // const decoded = jwt.verify(
+        //     token,
+        //     process.env.JWT_SECRET
+        // )
         req.user = decoded;
 
         next();
