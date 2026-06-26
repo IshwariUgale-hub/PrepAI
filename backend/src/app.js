@@ -1,5 +1,6 @@
 const express = require('express');
 const cors= require('cors');
+const errorHandler = require('./middlewares/error.middleware');
 
 const app = express();
 
@@ -12,5 +13,7 @@ app.get('/',(req,res)=>{
         message: "PREPAI BACKEND IS RUNNING"
     })
 })
+
+app.use(errorHandler);
 
 module.exports =app;
