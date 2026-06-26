@@ -1,4 +1,4 @@
-const requiredEnvVars = ["MONGODB_SERVER","JWT_SECRET","PORT","JWT_EXPIRES_IN"];
+const requiredEnvVars = ["MONGODB_SERVER","JWT_SECRET","PORT","JWT_EXPIRES_IN",  'RESET_TOKEN_SECRET'];
 
 requiredEnvVars.forEach((varName)=>{
 
@@ -12,4 +12,5 @@ module.exports = {
     MONGODB_SERVER: process.env.MONGODB_SERVER,
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+    RESET_TOKEN_SECRET: process.env.RESET_TOKEN_SECRET
 }

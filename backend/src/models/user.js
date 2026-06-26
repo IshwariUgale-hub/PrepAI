@@ -8,11 +8,17 @@ const userSchema = new mongoose.Schema({
     password: {type:String , required:true},
     avatar: {type:String},
     role:{type:String , enum:['user','admin'],default:'user'},
-    isVerified: {type:Boolean , default: false},
+    isEmailVerified: {type:Boolean , default: false},
     subscription: {type:String, enum:['free','pro'], default:'free'},
-    verifyToken:{type:String},
-    resetToken:{type:String},
-
+    EmailVerifyToken:{type:String, default:null},
+    passwordResetToken: {
+        type: String,
+        default: null
+    },
+    passwordResetExpires: {
+        type: Date,
+        default: null
+    }
 
 }, {timestamps:true});
 
